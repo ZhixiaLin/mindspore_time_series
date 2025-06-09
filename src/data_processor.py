@@ -93,7 +93,8 @@ class TimeSeriesDataset:
         plt.xticks(rotation=45)
         plt.grid(True, alpha=0.3)
         plt.tight_layout()
-        plt.show()
+        plt.savefig('results/data_visualization.png', dpi=300, bbox_inches='tight')
+        plt.close()
     
     def analyze_seasonality(self):
         """分析季节性"""
@@ -108,7 +109,8 @@ class TimeSeriesDataset:
         plt.xticks(range(1, 13))
         plt.grid(True, alpha=0.3)
         plt.tight_layout()
-        plt.show()
+        plt.savefig('results/seasonality_analysis.png', dpi=300, bbox_inches='tight')
+        plt.close()
         
         return monthly_avg
     

@@ -29,7 +29,7 @@ from src.trainer import TimeSeriesTrainer
 from src.evaluator import ModelEvaluator
 
 # 设置MindSpore上下文
-ms.set_context(mode=ms.GRAPH_MODE, device_target="CPU")
+ms.set_context(mode=ms.PYNATIVE_MODE, device_target="CPU")
 
 def create_directories():
     """创建必要的目录"""
@@ -55,7 +55,13 @@ def main():
         print(f"警告: 数据文件 {data_path} 不存在，将使用示例数据")
         data_path = None
     
+    print("初始化数据集...")
     dataset = TimeSeriesDataset(data_path=data_path, sequence_length=12)
+    
+    print("准备训练序列...")
+    X_train, y_train, X_test, y_test = dataset.prepare_sequences(train_ratio=0.8)
+    
+    print("数据预处理完成！")
     
     # 显示数据并保存图片
     plt.figure(figsize=(12, 6))
@@ -67,13 +73,11 @@ def main():
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.savefig('results/original_data.png', dpi=300, bbox_inches='tight')
-    plt.show()
-    
-    # 准备训练数据
-    X_train, y_train, X_test, y_test = dataset.prepare_sequences(train_ratio=0.8)
+    plt.close()  # 关闭图片，不显示
     
     # 2. 模型构建
     print("\n2. 模型构建...")
+    print("创建LSTM模型...")
     model = LSTMTimeSeriesModel(
         input_size=1,
         hidden_size=50,
@@ -83,9 +87,11 @@ def main():
     )
     
     print(f"模型参数数量: {sum(p.size for p in model.trainable_params())}")
+    print("模型构建完成！")
     
     # 3. 模型训练
     print("\n3. 模型训练...")
+    print("初始化训练器...")
     trainer = TimeSeriesTrainer(model, learning_rate=0.001)
     
     # 使用部分测试数据作为验证集
@@ -141,7 +147,7 @@ def main():
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.savefig('results/training_history.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    plt.close()  # 关闭图片，不显示
     
     # 保存预测结果
     y_true_rescaled = dataset.scaler.inverse_transform(y_test_final.reshape(-1, 1)).flatten()
@@ -157,7 +163,7 @@ def main():
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.savefig('results/predictions.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    plt.close()  # 关闭图片，不显示
     
     # 6. 模型保存
     print("\n6. 模型保存...")
