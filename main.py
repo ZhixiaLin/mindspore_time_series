@@ -50,7 +50,8 @@ def main():
     print("\n1. 数据加载和预处理...")
     
     # 检查数据文件是否存在
-    data_path = "data/AirPassengers.csv"
+    # data_path = "data/AirPassengers.csv"
+    data_path = "data/AirPassengers_USA.csv"
     if not os.path.exists(data_path):
         print(f"警告: 数据文件 {data_path} 不存在，将使用示例数据")
         data_path = None
